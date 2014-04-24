@@ -1,0 +1,53 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>My Processing Page</title>
+
+	<link rel="stylesheet" type="text/css" href="{% static 'pjs/3rd_party/ball/ball/css/bootstrap.css' %}" /> 
+	<link rel="stylesheet" type="text/css" href="{% static 'pjs/3rd_party/ball/ball/css/bootstrap-responsive.css' %}" /> 
+
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+    
+	<script type="text/javascript" src="{% static 'pjs/3rd_party/processing-js-1.4.8/processing.min.js' %}"></script>	
+<!--	<script type="text/javascript" src="{% static 'pjs/sorter.js' %}"</script> -->
+
+    <script type="text/javascript">
+
+		var kSortingThreadPath = "{% static 'pjs/sorting_thread.js' %}";
+		
+			
+		$.getScript("{% static 'pjs/sorter.js' %}", function()
+		{
+			activate_processing();
+		});
+
+
+    </script>
+</head>
+	
+<body>
+
+	<script src="{% static 'pjs/3rd_party/ball/ball/js/bootstrap.min.js' %}"></script>
+	
+	<div class="container">
+	<div class="jumbotron">
+		<h1>Processing qsort</h1>
+		<p class="lead">welcome to experiment lab</p>
+		<p class="lead">
+			Array: <input type="text" id="input_text" value="1, 6, 8, 5, 9, 13, 5, 3"></input>
+			<button class="btn" onclick="on_stop()">Stop</button>
+		</p>
+
+		
+
+		<canvas id="qsort" data-processing-sources="{% static 'pjs/sketches/qsort.pde' %} {% static 'pjs/sketches/sort_element.pde' %}"></canvas>
+	</div>
+	</div>
+
+
+</body>
+
+</html>
