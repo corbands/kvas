@@ -9,21 +9,27 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'pjs/3rd_party/ball/ball/css/bootstrap.css' %}" /> 
 	<link rel="stylesheet" type="text/css" href="{% static 'pjs/3rd_party/ball/ball/css/bootstrap-responsive.css' %}" /> 
 
-	<script src="http://code.jquery.com/jquery-latest.js"></script>
-    
+    <script type="text/javascript" src="{% static 'pjs/3rd_party/jquery-2.1.0.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'pjs/3rd_party/processing-js-1.4.8/processing.min.js' %}"></script>	
-<!--	<script type="text/javascript" src="{% static 'pjs/sorter.js' %}"</script> -->
 
     <script type="text/javascript">
-
-		var kSortingThreadPath = "{% static 'pjs/sorting_thread.js' %}";
-		
-			
+	    kSortingThreadPath = "{% static 'pjs/sorting_thread.js' %}";
+							
 		$.getScript("{% static 'pjs/sorter.js' %}", function()
 		{
 			activate_processing();
 		});
 
+	    function on_start()
+	    {
+			start_routine();			
+		}	
+		worker = null;	
+		function on_stop()
+		{
+			worker.terminate();
+			// worker.postMessage({'cmd':'stop'})
+		}
 
     </script>
 </head>
@@ -38,12 +44,11 @@
 		<p class="lead">welcome to experiment lab</p>
 		<p class="lead">
 			Array: <input type="text" id="input_text" value="1, 6, 8, 5, 9, 13, 5, 3"></input>
+			<button class="btn" onclick="on_start()">Start</button>
 			<button class="btn" onclick="on_stop()">Stop</button>
-		</p>
+		</p>	
 
-		
-
-		<canvas id="qsort" data-processing-sources="{% static 'pjs/sketches/qsort.pde' %} {% static 'pjs/sketches/sort_element.pde' %}"></canvas>
+		<canvas id="qsort" data-processing-sources="{% static 'pjs/sketches/qsort.pde' %}"></canvas>
 	</div>
 	</div>
 

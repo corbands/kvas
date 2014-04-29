@@ -5,19 +5,18 @@ self.addEventListener('message', function(args)
 	{
 		
 		case 'start':			
-			// todo elems init!
+			// create sort elements with input elemnts data (x, y, r, value)
 			var elems = Array();						
-			for (var i=0; i < data.elems.length; ++i)
+			for (var i=0; i < data.elems_data.length; ++i)
 			{
-				elems[i] = new SortElement(data.elems[i]);
+				elems[i] = new SortElement(data.elems_data[i]);
 				elems[i].init_move_manager();
 			}
 
 			qsort(elems, 0, elems.length-1);
 
 			break;
-		case 'stop':
-			self.postMessage('stop');
+		case 'stop':		
 			self.close();
 			break;
 	}
@@ -25,24 +24,33 @@ self.addEventListener('message', function(args)
 }, false);
 
 
-function qsort(e, p, q)
+function qsort(elems, p, q)
 {
-	var pivot = e[parseInt((p+q)/2)].elem.value;	
+	var e = elems;
+
+	var pivot_index = parseInt((p+q)/2)
+	var pivot = e[pivot_index].elem_data.value;	
 	var i = p;
 	var j = q;
 
 	while (i <= j)
-	{
-		while (e[i].elem.value < pivot)
+	{		
+		while (e[i].elem_data.value < pivot)
+		{			
+			draw_capture(elems, i, j, pivot_index, 1000);
 			++i;
-		while (e[j].elem.value > pivot)
+		}
+		while (e[j].elem_data.value > pivot)
+		{		
+			draw_capture(elems, i, j, pivot_index, 1000);	
 			--j;
+		}
 
 		if (i <= j)			// todo <
 		{	
-			e[j].set_destination(e[i].elem.x, e[i].elem.y, -1);
-		    e[i].set_destination(e[j].elem.x, e[j].elem.y, 1); 
-		    exchange_elements(e, i, j);      
+			e[j].set_destination(e[i].elem_data.x, e[i].elem_data.y, -1);
+		    e[i].set_destination(e[j].elem_data.x, e[j].elem_data.y, 1); 
+		    exchange_elements(e, i, j, pivot_index);      
 
 			var temp = e[j];
 			e[j] = e[i];
@@ -58,21 +66,14 @@ function qsort(e, p, q)
 
 }
 
-function exchange_elements(e, i, j)
+function exchange_elements(elems, i, j, pivot_index)
 {
 	var stop_moving = false;
 	while (!stop_moving)
-	{		
-		m = new Date().getTime();
-		while (new Date().getTime() - m < 12)
-		{				
-		}
-			
-		var b1 = e[i].move();
-		var b2 = e[j].move();		
-
-		var elems_data = get_elems_data(e);
-		postMessage( {'elems': elems_data} );
+	{				
+		draw_capture(elems, i, j, pivot_index, 25);
+		var b1 = elems[i].move();
+		var b2 = elems[j].move();		
 
 		if (!b1 && !b2)
 			stop_moving = true;
@@ -81,17 +82,27 @@ function exchange_elements(e, i, j)
 
 function get_elems_data(elems)
 {
-	var e = Array();
+	var elems_data = Array();
 	for (var i=0; i < elems.length; ++i)
 	{
-		var el = elems[i].elem;		
-		e[i] = new Element(el.x, el.y, el.r, el.value);
+		var el = elems[i].elem_data;		
+		elems_data[i] = new SortElementData(el.x, el.y, el.r, el.value);
 	}
-	return e;
+	return elems_data;
+}
+
+function draw_capture(elems, i, j, pivot_index, delay)
+{	
+	var elems_data = get_elems_data(elems);
+	postMessage( {'elems_data': elems_data, 'i': i, 'j': j, 'pivot': pivot_index} );
+	m = new Date().getTime();
+	while (new Date().getTime() - m < delay)		// todo 25 - refresh delay
+	{				
+	}				
 }
 
 // class
-function Element(x, y, r, value)
+function SortElementData(x, y, r, value)
 {
 	this.x = x;
 	this.y = y;
@@ -99,9 +110,9 @@ function Element(x, y, r, value)
 	this.value = value;
 }
 
-function SortElement(e)
+function SortElement(elem_data)
 {
-	this.elem = e;	// consist Element data (x, y, r ,value)
+	this.elem_data = elem_data;	// consist ElementData (x, y, r ,value)
 	this.mm = null;
 
 	this.init_move_manager = function()
@@ -111,16 +122,17 @@ function SortElement(e)
 
 	this.set_destination = function(xd, yd, dir)
 	{		
-		this.mm.set_destination(this.elem.x, this.elem.y, xd, yd, dir);
+		this.mm.set_destination(this.elem_data.x, this.elem_data.y,
+		 xd, yd, dir);
 	};
 
 	this.move = function()
 	{
-		return this.mm.move(this.elem);
+		return this.mm.move(this.elem_data);
 	};
 
 }
-b = false;
+
 // class
 function MoveManager(sort_element)
 {
@@ -166,11 +178,7 @@ function MoveManager(sort_element)
 	         this.state = 1;       
 	       break;
 	    case 1:
-	      elem.x += r/10.0;
-	      if (!b)
-	      {
-	      	b = true;	      	
-	      }
+	      elem.x += r/10.0;	      
 	      if (elem.x > x_dest - r)
 	        this.state = 2;
 	      break;
