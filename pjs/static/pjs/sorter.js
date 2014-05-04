@@ -1,15 +1,3 @@
-var bound = false;
-function activate_processing()
-{
-	pjs = Processing.getInstanceById('qsort');
-	if (pjs != null)
-	{
-		bound = true;
-		prepare_sorting_data();
-	}
-	if (!bound)
-		setTimeout(activate_processing, 10);
-}
 
 function prepare_sorting_data()
 {
@@ -84,4 +72,9 @@ function SortElementData(x, y, r, value)
 	this.y = y;
 	this.r = r;
 	this.value = value;
+}
+
+function f()
+{
+	console.log("aa");
 }

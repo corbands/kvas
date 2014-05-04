@@ -7,52 +7,35 @@
     <title>My Processing Page</title>
 
 	<link rel="stylesheet" type="text/css" href="{% static 'pjs/3rd_party/ball/ball/css/bootstrap.css' %}" /> 
-	<link rel="stylesheet" type="text/css" href="{% static 'pjs/3rd_party/ball/ball/css/bootstrap-responsive.css' %}" /> 
 
-    <script type="text/javascript" src="{% static 'pjs/3rd_party/jquery-2.1.0.min.js' %}"></script>
-	<script type="text/javascript" src="{% static 'pjs/3rd_party/processing-js-1.4.8/processing.min.js' %}"></script>	
-
-    <script type="text/javascript">
-	    kSortingThreadPath = "{% static 'pjs/sorting_thread.js' %}";
-							
-		$.getScript("{% static 'pjs/sorter.js' %}", function()
-		{
-			activate_processing();
-		});
-
-	    function on_start()
-	    {
-			start_routine();			
-		}	
-		worker = null;	
-		function on_stop()
-		{
-			worker.terminate();
-			// worker.postMessage({'cmd':'stop'})
-		}
-
-    </script>
-</head>
-	
-<body>
-
+	 <script src="{% static 'pjs/3rd_party/jquery-2.1.0.min.js' %}"></script>
+    
 	<script src="{% static 'pjs/3rd_party/ball/ball/js/bootstrap.min.js' %}"></script>
-	
+
+	<script src="{% static 'pjs/3rd_party/processing-js-1.4.8/processing.js' %}"></script>	
+
+</head>
+
+<body>
+	<script src="{% static 'pjs/qsort/qsort.js' %}"></script>
+
 	<div class="container">
 	<div class="jumbotron">
 		<h1>Processing qsort</h1>
 		<p class="lead">welcome to experiment lab</p>
 		<p class="lead">
 			Array: <input type="text" id="input_text" value="1, 6, 8, 5, 9, 13, 5, 3"></input>
+		</p>
+		<p class="text-center">
 			<button class="btn" onclick="on_start()">Start</button>
-			<button class="btn" onclick="on_stop()">Stop</button>
-		</p>	
-
-		<canvas id="qsort" data-processing-sources="{% static 'pjs/sketches/qsort.pde' %}"></canvas>
+			<button class="btn" onclick="on_refresh()">Refresh</button>
+			<button id="btn_stop" class="btn" onclick="on_stop()">Stop</button>
+		</p>			
+		<p class="text-center">
+			<canvas id="qsort" data-processing-sources="{% static 'pjs/qsort/qsort.pde' %} {% static 'pjs/qsort/qsort_routine.pde'%}"></canvas>
+		</p>
 	</div>
 	</div>
-
 
 </body>
-
 </html>
